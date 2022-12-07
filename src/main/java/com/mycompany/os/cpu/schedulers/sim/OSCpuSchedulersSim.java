@@ -9,7 +9,12 @@ import java.util.Scanner;
 
 /**
  *
- * @author 10
+ * Os Section AI-4
+ * 20200508
+ * 20200318
+ * 20200474
+ * 20200043
+ * 20200172
  */
 public class OSCpuSchedulersSim {
 
