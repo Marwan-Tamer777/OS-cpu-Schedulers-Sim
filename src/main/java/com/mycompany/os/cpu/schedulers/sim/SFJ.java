@@ -43,8 +43,14 @@ public class SFJ {
         tempI = scan.nextInt();
         contextSwitch = tempI;
         
+        //Teting
+        /*processes.add(new Process("P1",0,7));
+        processes.add(new Process("P2",2,4));
+        processes.add(new Process("P3",4,1));
+        processes.add(new Process("P4",5,4));*/
         for(int i=0;i<processesNum;i++){
             Process p = new Process();
+            p.enterNormalProcess();
             processes.add(p);
         }
     }
@@ -58,25 +64,27 @@ public class SFJ {
                 if(processes.get(i).arrivalTime<=currentTime){
                     activePs.add(processes.get(i));
                     processes.remove(i);
+                    i--;
                 }
             }
             
-            if(activePs.isEmpty()){continue;}
+            if(activePs.isEmpty()){currentTime+= 1;continue;}
             
             Collections.sort(activePs, new SortByRemainingTime());
             
             //If the previous Process is not the same as the current shortest one, then we will
             //puhs the new one in the schedule and add context switch overhead.
             if(!temp.equals(activePs.get(0).name)){
+                //to not add context switching on first job
+                if(!temp.equals("-1")){currentTime+=contextSwitch;}
                 schedule.add(activePs.get(0).name);
                 temp = activePs.get(0).name;
-                currentTime+=contextSwitch;
             }
             
             currentTime+= 1;
             
             activePs.get(0).remainingTime -= 1;
-            if(activePs.get(0).remainingTime == 0){
+            if(activePs.get(0).remainingTime <= 0){
                 activePs.get(0).exitTime = currentTime;
                 finishedPs.add(activePs.get(0));
                 activePs.remove(0);

@@ -39,7 +39,9 @@ public class OSCpuSchedulersSim {
               break;
              case "ps":
              case "3": 
-              System.out.println("Today is Monday");
+              PS ps = new PS();
+              ps.run();
+              ps.printResult();
               break;
              case "ag":
              case "4": 
@@ -50,7 +52,7 @@ public class OSCpuSchedulersSim {
               System.out.println("Closing the Program");
               return;
             default:
-              System.out.println("Looking forward to the Weekend");
+              System.out.println("Wrong Input");
           }
         }
     }

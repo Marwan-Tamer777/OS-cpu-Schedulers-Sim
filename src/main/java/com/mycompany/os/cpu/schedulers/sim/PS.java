@@ -13,19 +13,17 @@ import java.util.Scanner;
  *
  * @author 10
  */
-public class RR {
+public class PS {
     List<Process> processes;
     List<Process> activePs;
     List<Process> finishedPs;
     List<String> schedule;
     int processesNum;
     int contextSwitch;
-    int quantum;
     int currentTime = 0;
-    Process tempP;
     String temp;
     
-    public RR(){
+    public PS(){
         this.setUpSchedule();
     };
     
@@ -45,19 +43,17 @@ public class RR {
         tempI = scan.nextInt();
         contextSwitch = tempI;
         
-        System.out.println("Please Enter Quantum: ");
-        tempI = scan.nextInt();
-        quantum = tempI;
-        
-        //Teting
-        processes.add(new Process("P1",0,24));
-        processes.add(new Process("P2",0,3));
-        processes.add(new Process("P3",0,3));
-        /*for(int i=0;i<processesNum;i++){
+        //Testing
+        /*processes.add(new Process("P1",0,10,3));
+        processes.add(new Process("P2",0,1,1));
+        processes.add(new Process("P3",0,2,4));
+        processes.add(new Process("P4",0,1,5));
+        processes.add(new Process("P5",0,5,2));*/
+        for(int i=0;i<processesNum;i++){
             Process p = new Process();
-            p.enterNormalProcess();
+            p.enterPiorityProcess();
             processes.add(p);
-        }*/
+        }
     }
     
     //Each 1 time unit we check on the avail Jobs to see if a shortest one is available.
@@ -73,27 +69,25 @@ public class RR {
                 }
             }
             
-            if(activePs.isEmpty()){currentTime+= quantum;continue;}
+            if(activePs.isEmpty()){currentTime+= 1;continue;}
             
-            schedule.add(activePs.get(0).name);
-            
-            //if reamining time less that qunatium then deduce reamining time not quantum
-            if(activePs.get(0).remainingTime<quantum){
-                currentTime+=activePs.get(0).remainingTime;
-                activePs.get(0).remainingTime =0;
-            } else {
-                currentTime+= quantum;
-                activePs.get(0).remainingTime -= quantum;
+            Collections.sort(activePs, new SortByPiority());
+            //If the previous Process is not the same as the current shortest one, then we will
+            //puhs the new one in the schedule and add context switch overhead.
+            if(!temp.equals(activePs.get(0).name)){
+                //to not add context switching on first job
+                if(!temp.equals("-1")){currentTime+=contextSwitch;}
+                schedule.add(activePs.get(0).name);
+                temp = activePs.get(0).name;
             }
             
+            currentTime+= 1;
+            
+            activePs.get(0).remainingTime -= 1;
             if(activePs.get(0).remainingTime <= 0){
                 activePs.get(0).exitTime = currentTime;
                 finishedPs.add(activePs.get(0));
                 activePs.remove(0);
-            } else {
-                tempP = activePs.get(0);
-                activePs.remove(0);
-                activePs.add(tempP);
             }
             
         }
@@ -119,5 +113,5 @@ public class RR {
         System.out.println("Average Turn Around Time = " + (totalTurnAround/finishedPs.size()) +
                 " Average Waiting Time = " + (totalWaiting/finishedPs.size()));
     };
-
+    
 }

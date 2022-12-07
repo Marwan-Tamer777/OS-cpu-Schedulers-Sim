@@ -22,19 +22,20 @@ public class Process {
     int piority = -1;
     
     public Process(){
-        this.enterNormalProcess();
     }
     
     public Process(String n,int a,int b){
         name =n;
         arrivalTime = a;
         burstTime = b;
+        remainingTime = burstTime;
     };
     
     public Process(String n,int a,int b,int p){
         name =n;
         arrivalTime = a;
         burstTime = b;
+        remainingTime = burstTime;
         piority = p;
     };
     
@@ -79,5 +80,16 @@ class SortByRemainingTime implements Comparator<Process>
     public int compare(Process a, Process b)
     {
         return a.remainingTime - b.remainingTime;
+    }
+}
+
+
+class SortByPiority implements Comparator<Process>
+{
+    // Used for sorting in ascending order of
+    // roll number
+    public int compare(Process a, Process b)
+    {
+        return a.piority - b.piority;
     }
 }
