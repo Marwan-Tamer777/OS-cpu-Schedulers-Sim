@@ -77,6 +77,13 @@ public class RR {
             
             schedule.add(activePs.get(0).name);
             
+             //If the previous Process is not the same as the current shortest one, then we will add context switch overhead.
+            if(!temp.equals(activePs.get(0).name)){
+                //to not add context switching on first job
+                if(!temp.equals("-1")){currentTime+=contextSwitch;}
+                temp = activePs.get(0).name;
+            }
+            
             //if reamining time less that qunatium then deduce reamining time not quantum
             if(activePs.get(0).remainingTime<quantum){
                 currentTime+=activePs.get(0).remainingTime;

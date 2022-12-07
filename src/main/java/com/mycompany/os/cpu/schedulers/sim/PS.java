@@ -39,9 +39,7 @@ public class PS {
         tempI = scan.nextInt();
         processesNum = tempI;
         
-        System.out.println("Please Enter Context Switching Overhead: ");
-        tempI = scan.nextInt();
-        contextSwitch = tempI;
+        contextSwitch = 0;
         
         //Testing
         /*processes.add(new Process("P1",0,10,3));
@@ -51,7 +49,7 @@ public class PS {
         processes.add(new Process("P5",0,5,2));*/
         for(int i=0;i<processesNum;i++){
             Process p = new Process();
-            p.enterPiorityProcess();
+            p.enterPriorityProcess();
             processes.add(p);
         }
     }
@@ -73,7 +71,7 @@ public class PS {
             
             Collections.sort(activePs, new SortByPiority());
             //If the previous Process is not the same as the current shortest one, then we will
-            //puhs the new one in the schedule and add context switch overhead.
+            //push the new one in the schedule and add context switch overhead.
             if(!temp.equals(activePs.get(0).name)){
                 //to not add context switching on first job
                 if(!temp.equals("-1")){currentTime+=contextSwitch;}

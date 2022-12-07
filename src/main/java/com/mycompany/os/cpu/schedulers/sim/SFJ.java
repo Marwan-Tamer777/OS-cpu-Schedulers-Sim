@@ -73,7 +73,7 @@ public class SFJ {
             Collections.sort(activePs, new SortByRemainingTime());
             
             //If the previous Process is not the same as the current shortest one, then we will
-            //puhs the new one in the schedule and add context switch overhead.
+            //push the new one in the schedule and add context switch overhead.
             if(!temp.equals(activePs.get(0).name)){
                 //to not add context switching on first job
                 if(!temp.equals("-1")){currentTime+=contextSwitch;}

@@ -20,6 +20,7 @@ public class Process {
     int waitingTime;
     int remainingTime;
     int piority = -1;
+    int quantum= -1;
     
     public Process(){
     }
@@ -37,6 +38,15 @@ public class Process {
         burstTime = b;
         remainingTime = burstTime;
         piority = p;
+    };
+    
+    public Process(String n,int a,int b,int p,int q){
+        name =n;
+        arrivalTime = a;
+        burstTime = b;
+        remainingTime = burstTime;
+        piority = p;
+        quantum = q;
     };
     
     public void enterNormalProcess(){
@@ -57,7 +67,7 @@ public class Process {
         remainingTime = burstTime;
     };
     
-    public void enterPiorityProcess(){
+    public void enterPriorityProcess(){
         this.enterNormalProcess();
         
         Scanner scan = new Scanner(System.in);
@@ -65,6 +75,16 @@ public class Process {
         System.out.println("Please Enter Process Piority: ");
         tempI = scan.nextInt();
         piority = tempI;
+    };
+    
+    public void enterQuantumProcess(){
+        this.enterPriorityProcess();
+        
+        Scanner scan = new Scanner(System.in);
+        int tempI;
+        System.out.println("Please Enter Process Qunatum: ");
+        tempI = scan.nextInt();
+        quantum = tempI;
     };
     
     public void calcTimes(){

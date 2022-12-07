@@ -18,8 +18,8 @@ public class OSCpuSchedulersSim {
         Scanner scan = new Scanner(System.in);
         
         while(true){
-            System.out.print("Please enter your deired Schudeling algortihm\n "
-                    + "1- SFJ (Preemitve shortest job first).\n 2- RR (Round Robin).\n 3- PS (Piorty Scheduling).\n 4- AG\n 5- exit.\n"); 
+            System.out.print("Please enter your desired Schudeling algortihm\n "
+                    + "1- SFJ (Preemitve shortest job first).\n 2- RR (Round Robin).\n 3- PS (Priority Scheduling).\n 4- AG\n 5- exit.\n"); 
             String choice;
             choice = scan.nextLine();
             choice = choice.toLowerCase();
@@ -45,7 +45,9 @@ public class OSCpuSchedulersSim {
               break;
              case "ag":
              case "4": 
-              System.out.println("Today is Friday");
+              AG ag = new AG();
+              ag.run();
+              ag.printResult();
               break;
              case "exit":
              case "5": 
