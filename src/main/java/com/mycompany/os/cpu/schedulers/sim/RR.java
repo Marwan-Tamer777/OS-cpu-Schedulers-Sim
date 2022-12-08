@@ -18,6 +18,7 @@ public class RR {
     List<Process> activePs;
     List<Process> finishedPs;
     List<String> schedule;
+    List<Integer> scheduleTimes;
     int processesNum;
     int contextSwitch;
     int quantum;
@@ -34,6 +35,7 @@ public class RR {
         activePs = new ArrayList<Process>();
         finishedPs = new ArrayList<Process>();
         schedule = new ArrayList<String>();
+        scheduleTimes = new ArrayList<Integer>();
         Scanner scan = new Scanner(System.in);
         int tempI;
         
@@ -76,7 +78,7 @@ public class RR {
             if(activePs.isEmpty()){currentTime+= quantum;continue;}
             
             schedule.add(activePs.get(0).name);
-            
+            scheduleTimes.add(currentTime);
              //If the previous Process is not the same as the current shortest one, then we will add context switch overhead.
             if(!temp.equals(activePs.get(0).name)){
                 //to not add context switching on first job
@@ -112,6 +114,10 @@ public class RR {
         int totalWaiting = 0;
         for(int i = 0;i<schedule.size();i++){
             System.out.print(schedule.get(i) + " ");
+        }
+        System.out.println();
+        for(int i = 0;i<scheduleTimes.size();i++){
+            System.out.print(scheduleTimes.get(i) + " ");
         }
         System.out.println();
         System.out.println("Name : Turn Around : Waiting");

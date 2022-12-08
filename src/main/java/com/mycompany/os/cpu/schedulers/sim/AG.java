@@ -16,9 +16,11 @@ import java.util.Scanner;
  */
 public class AG {
     List<Process> processes;
+    List<Process> NonSortedPs;
     List<Process> activePs;
     List<Process> finishedPs;
     List<String> schedule;
+    List<Integer> scheduleTimes;
     List<List<Integer>> quantums;
     int processesNum;
     int contextSwitch;
@@ -31,9 +33,11 @@ public class AG {
     
     public void setUpSchedule(){
         processes = new ArrayList<Process>();
+        NonSortedPs = new ArrayList<Process>();
         activePs = new ArrayList<Process>();
         finishedPs = new ArrayList<Process>();
         schedule = new ArrayList<String>();
+        scheduleTimes = new ArrayList<Integer>();
         quantums = new ArrayList<List<Integer>>();
         Scanner scan = new Scanner(System.in);
         int tempI;
@@ -45,23 +49,30 @@ public class AG {
         contextSwitch = 0;
         
         //Testing
-        /*processes.add(new Process("P1",0,17,4,7));
-        processes.add(new Process("P2",2,6,7,9));
-        processes.add(new Process("P3",5,11,3,4));
-        processes.add(new Process("P4",15,4,6,6));*/
-        for(int i=0;i<processesNum;i++){
+        Process p = new Process("P1",0,17,4,7);
+        processes.add(p);
+        NonSortedPs.add(p);
+        p = new Process("P2",2,6,7,9);
+        processes.add(p);
+        NonSortedPs.add(p);
+        p = new Process("P3",5,11,3,4);
+        processes.add(p);
+        NonSortedPs.add(p);
+        p = new Process("P4",15,4,6,6);
+        processes.add(p);
+        NonSortedPs.add(p);
+        /*for(int i=0;i<processesNum;i++){
             Process p = new Process();
             p.enterQuantumProcess();
             processes.add(p);
-        }
+            NonSortedPs.add(p);
+        }*/
     }
     
     //Each 1 time unit we check on the avail Jobs to see if a shortest one is available.
     public void run(){
         temp = "-1";
         Process active = null;
-        List<Integer> arr = null;
-        
         while(!(finishedPs.size() == processes.size())){
             int low,high;
             
@@ -72,32 +83,76 @@ public class AG {
                     }
                 }
             }
-            arr = new ArrayList<Integer>();
-            for(int i=0;i<processes.size();i++){
-                arr.add(processes.get(i).quantum);
-            }
-            quantums.add(arr);
+            
+            
             
             if(activePs.isEmpty()){currentTime+= 1;continue;}
             //choose the current process to get processed in the fist iteration only.
             if(temp.equals("-1")){
-                active = activePs.get(0);
+                active = NonSortedPs.get(0);
             }
+            RecordState(active);
             low = (int) ceil(0.25*active.quantum);
             high = (int) ceil(0.50*active.quantum);
             
             
-            //If the previous Process is not the same as the current shortest one, then we will
-            //puhs the new one in the schedule and add context switch overhead.
-            if(!temp.equals(active.name)){
-                //to not add context switching on first job
-                if(!temp.equals("-1")){currentTime+=contextSwitch;}
-                schedule.add(active.name);
-                temp = activePs.get(0).name;
+            //Update time and choose next active process
+            //if PorcessTime retuns 1 means that the process have finished and moved to the finished list.
+            
+            //From 0 to 25%(low).
+            if(ProcessTime(active,low)==1){
+                if(activePs.isEmpty()){continue;}
+                active = NonSortedPs.get(0);
+                continue;
+            } else {
+                //From 25 to 50%(high). Choose next process using priority.
+                Collections.sort(activePs, new SortByPiority());
+                if(!active.name.equals(activePs.get(0).name)){
+                    active.quantum += (int)ceil((active.quantum - low)/2);
+                    ReplaceProcess(active);
+                    continue;
+                }
+                
+                
+                if(ProcessTime(active,high-low)==1){
+                    if(activePs.isEmpty()){continue;}
+                    Collections.sort(activePs, new SortByPiority());
+                    active = activePs.get(0);
+                    continue;
+                } else {
+                    //From 50 to 100%(qunatum).  Choose next process using remaining time. if finished chooe firt come firt serve
+                    Collections.sort(activePs, new SortByRemainingTime());
+                    if(!active.name.equals(activePs.get(0).name)){
+                        active.quantum += (int)ceil((active.quantum - high));
+                        ReplaceProcess(active);
+                        continue;
+                    }
+                    
+                    int availPreemtiveTime = active.quantum - high;
+                    while(availPreemtiveTime>0){
+                        Collections.sort(activePs, new SortByRemainingTime());
+                        if(!active.name.equals(activePs.get(0).name)){
+                            active.quantum += (int)ceil((active.quantum - high));
+                            ReplaceProcess(active);
+                            continue;
+                        } else {
+                            if(ProcessTime(active,1)==1){
+                                if(activePs.isEmpty()){break;}
+                                active = activePs.get(0);
+                                continue;
+                            }
+                        }
+                        availPreemtiveTime--;
+                    }
+                    if(activePs.isEmpty()){continue;}
+                    active.quantum *=2;
+                    ReplaceProcess(active);
+                    active = NonSortedPs.get(0);
+                }
             }
             
-            
-            //Update time and choose next active process
+            //-----------------------------------------------
+            /*
             if(active.remainingTime<=low){
                 currentTime+= active.remainingTime;
                 active.remainingTime = 0;
@@ -136,10 +191,11 @@ public class AG {
                 Collections.sort(activePs, new SortByRemainingTime());
                 active.quantum += (int)ceil((active.quantum - high));
                 active = activePs.get(0);
-            }
+            }*/
           
             
         }
+        RecordState(active);
         
     };
     
@@ -148,6 +204,10 @@ public class AG {
         int totalWaiting = 0;
         for(int i = 0;i<schedule.size();i++){
             System.out.print(schedule.get(i) + " ");
+        }
+        System.out.println();
+        for(int i = 0;i<scheduleTimes.size();i++){
+            System.out.print(scheduleTimes.get(i) + " ");
         }
         System.out.println();
         System.out.println("Name : Turn Around : Waiting");
@@ -171,4 +231,45 @@ public class AG {
         }
     };
     
+    public int ProcessTime(Process p,int time){
+        if(p.remainingTime<=time){
+            currentTime+= p.remainingTime;
+            p.remainingTime = 0;
+            p.exitTime = currentTime;
+            finishedPs.add(p);
+            activePs.remove(p);
+            NonSortedPs.remove(p);
+            p.quantum =0;
+            return 1;
+        } else {
+            currentTime+= time;
+             p.remainingTime -= time;
+         }
+        return 0;
+    }
+    
+    public void ReplaceProcess(Process p){
+        NonSortedPs.remove(p);
+        NonSortedPs.add(p);
+        p = activePs.get(0);
+    }
+    
+    public void RecordState(Process active){
+        //If the previous Process is not the same as the current shortest one, then we will
+        //puss the new one in the schedule and add context switch overhead.
+        if(!temp.equals(active.name)){
+            //to not add context switching on first job
+            if(!temp.equals("-1")){currentTime+=contextSwitch;}
+            schedule.add(active.name);
+            scheduleTimes.add(currentTime);
+            temp = activePs.get(0).name;
+        }
+            
+        List<Integer> arr = null;
+        arr = new ArrayList<Integer>();
+        for(int i=0;i<processes.size();i++){
+            arr.add(processes.get(i).quantum);
+        }
+        quantums.add(arr);
+    }
 }

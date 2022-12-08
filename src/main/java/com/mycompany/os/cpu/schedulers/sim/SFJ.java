@@ -18,6 +18,7 @@ public class SFJ {
     List<Process> activePs;
     List<Process> finishedPs;
     List<String> schedule;
+    List<Integer> scheduleTimes;
     int processesNum;
     int contextSwitch;
     int currentTime = 0;
@@ -32,6 +33,7 @@ public class SFJ {
         activePs = new ArrayList<Process>();
         finishedPs = new ArrayList<Process>();
         schedule = new ArrayList<String>();
+        scheduleTimes = new ArrayList<Integer>();
         Scanner scan = new Scanner(System.in);
         int tempI;
         
@@ -78,6 +80,7 @@ public class SFJ {
                 //to not add context switching on first job
                 if(!temp.equals("-1")){currentTime+=contextSwitch;}
                 schedule.add(activePs.get(0).name);
+                scheduleTimes.add(currentTime);
                 temp = activePs.get(0).name;
             }
             
@@ -99,6 +102,10 @@ public class SFJ {
         int totalWaiting = 0;
         for(int i = 0;i<schedule.size();i++){
             System.out.print(schedule.get(i) + " ");
+        }
+        System.out.println();
+        for(int i = 0;i<scheduleTimes.size();i++){
+            System.out.print(scheduleTimes.get(i) + " ");
         }
         System.out.println();
         System.out.println("Name : Turn Around : Waiting");
