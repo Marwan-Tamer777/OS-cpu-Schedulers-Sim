@@ -49,7 +49,7 @@ public class AG {
         contextSwitch = 0;
         
         //Testing
-        Process p = new Process("P1",0,17,4,7);
+        /*Process p = new Process("P1",0,17,4,7);
         processes.add(p);
         NonSortedPs.add(p);
         p = new Process("P2",2,6,7,9);
@@ -60,13 +60,13 @@ public class AG {
         NonSortedPs.add(p);
         p = new Process("P4",15,4,6,6);
         processes.add(p);
-        NonSortedPs.add(p);
-        /*for(int i=0;i<processesNum;i++){
+        NonSortedPs.add(p);*/
+        for(int i=0;i<processesNum;i++){
             Process p = new Process();
             p.enterQuantumProcess();
             processes.add(p);
             NonSortedPs.add(p);
-        }*/
+        }
     }
     
     //Each 1 time unit we check on the avail Jobs to see if a shortest one is available.
@@ -75,16 +75,7 @@ public class AG {
         Process active = null;
         while(!(finishedPs.size() == processes.size())){
             int low,high;
-            
-            for(int i=0;i<processes.size();i++){
-                if(processes.get(i).arrivalTime<=currentTime){
-                    if(!activePs.contains(processes.get(i)) && !finishedPs.contains(processes.get(i))){
-                        activePs.add(processes.get(i));
-                    }
-                }
-            }
-            
-            
+            RefreshActives();
             
             if(activePs.isEmpty()){currentTime+= 1;continue;}
             //choose the current process to get processed in the fist iteration only.
@@ -106,10 +97,12 @@ public class AG {
                 continue;
             } else {
                 //From 25 to 50%(high). Choose next process using priority.
+                
                 Collections.sort(activePs, new SortByPiority());
                 if(!active.name.equals(activePs.get(0).name)){
                     active.quantum += (int)ceil((active.quantum - low)/2);
-                    ReplaceProcess(active);
+                    PlaceAtEnd(active);
+                    active = activePs.get(0);
                     continue;
                 }
                 
@@ -121,20 +114,24 @@ public class AG {
                     continue;
                 } else {
                     //From 50 to 100%(qunatum).  Choose next process using remaining time. if finished chooe firt come firt serve
+                    
                     Collections.sort(activePs, new SortByRemainingTime());
                     if(!active.name.equals(activePs.get(0).name)){
                         active.quantum += (int)ceil((active.quantum - high));
-                        ReplaceProcess(active);
+                        PlaceAtEnd(active);
+                        active = activePs.get(0);
                         continue;
                     }
                     
                     int availPreemtiveTime = active.quantum - high;
                     while(availPreemtiveTime>0){
+                        RefreshActives();
                         Collections.sort(activePs, new SortByRemainingTime());
                         if(!active.name.equals(activePs.get(0).name)){
                             active.quantum += (int)ceil((active.quantum - high));
-                            ReplaceProcess(active);
-                            continue;
+                            PlaceAtEnd(active);
+                            active = activePs.get(0);
+                            break;
                         } else {
                             if(ProcessTime(active,1)==1){
                                 if(activePs.isEmpty()){break;}
@@ -144,9 +141,10 @@ public class AG {
                         }
                         availPreemtiveTime--;
                     }
+                    if(active.name.equals(activePs.get(0).name)){continue;}
                     if(activePs.isEmpty()){continue;}
                     active.quantum *=2;
-                    ReplaceProcess(active);
+                    PlaceAtEnd(active);
                     active = NonSortedPs.get(0);
                 }
             }
@@ -246,13 +244,22 @@ public class AG {
              p.remainingTime -= time;
          }
         return 0;
-    }
+    };
     
-    public void ReplaceProcess(Process p){
+    public void RefreshActives(){
+        for(int i=0;i<processes.size();i++){
+            if(processes.get(i).arrivalTime<=currentTime){
+                if(!activePs.contains(processes.get(i)) && !finishedPs.contains(processes.get(i))){
+                    activePs.add(processes.get(i));
+                }
+            }
+        }
+    };
+    
+    public void PlaceAtEnd(Process p){
         NonSortedPs.remove(p);
         NonSortedPs.add(p);
-        p = activePs.get(0);
-    }
+    };
     
     public void RecordState(Process active){
         //If the previous Process is not the same as the current shortest one, then we will
@@ -262,7 +269,7 @@ public class AG {
             if(!temp.equals("-1")){currentTime+=contextSwitch;}
             schedule.add(active.name);
             scheduleTimes.add(currentTime);
-            temp = activePs.get(0).name;
+            if(!activePs.isEmpty()){temp = activePs.get(0).name;}
         }
             
         List<Integer> arr = null;
@@ -271,5 +278,5 @@ public class AG {
             arr.add(processes.get(i).quantum);
         }
         quantums.add(arr);
-    }
+    };
 }
