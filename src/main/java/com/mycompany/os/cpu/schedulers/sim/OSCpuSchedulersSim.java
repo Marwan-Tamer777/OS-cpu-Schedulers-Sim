@@ -21,7 +21,6 @@ public class OSCpuSchedulersSim {
     public static void main(String[] args) {
         System.out.println("Hello World!");
         Scanner scan = new Scanner(System.in);
-
         while(true){
             System.out.print("Please enter your desired Schudeling algortihm\n "
                     + "1- SFJ (Preemitve shortest job first).\n 2- RR (Round Robin).\n 3- PS (Priority Scheduling).\n 4- AG\n 5- exit.\n"); 
