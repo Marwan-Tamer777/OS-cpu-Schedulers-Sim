@@ -59,8 +59,9 @@ public class PS {
     //Each 1 time unit we check on the avail Jobs to see if a shortest one is available.
     public void run(){
         temp = "-1";
+        int refresh = 0;
         while(!(activePs.isEmpty() && processes.isEmpty())){
-            
+            refresh++;
             for(int i=0;i<processes.size();i++){
                 if(processes.get(i).arrivalTime<=currentTime){
                     activePs.add(processes.get(i));
@@ -72,6 +73,14 @@ public class PS {
             if(activePs.isEmpty()){currentTime+= 1;continue;}
             
             Collections.sort(activePs, new SortByPiority());
+            
+            if(refresh>5){
+                refresh = 0;
+                Process p1 = activePs.get(0);
+                Process p2 = activePs.get(activePs.size()-1);
+                activePs.set(0,p2);
+                activePs.set(activePs.size()-1,p1);
+            }
             //If the previous Process is not the same as the current shortest one, then we will
             //push the new one in the schedule and add context switch overhead.
             if(!temp.equals(activePs.get(0).name)){
