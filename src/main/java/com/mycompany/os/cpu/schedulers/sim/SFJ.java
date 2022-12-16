@@ -78,7 +78,11 @@ public class SFJ {
             //push the new one in the schedule and add context switch overhead.
             if(!temp.equals(activePs.get(0).name)){
                 //to not add context switching on first job
-                if(!temp.equals("-1")){currentTime+=contextSwitch;}
+                if(!temp.equals("-1") && contextSwitch !=0){
+                    scheduleTimes.add(currentTime);
+                    currentTime+=contextSwitch;
+                    schedule.add("--");
+                }
                 schedule.add(activePs.get(0).name);
                 scheduleTimes.add(currentTime);
                 temp = activePs.get(0).name;
@@ -94,18 +98,19 @@ public class SFJ {
             }
             
         }
-        
+        scheduleTimes.add(currentTime);
     };
     
     public void printResult(){
         int totalTurnAround = 0;
         int totalWaiting = 0;
+        System.out.print("  ");
         for(int i = 0;i<schedule.size();i++){
-            System.out.print(schedule.get(i) + " ");
+            System.out.print(schedule.get(i) + "  ");
         }
         System.out.println();
         for(int i = 0;i<scheduleTimes.size();i++){
-            System.out.print(scheduleTimes.get(i) + " ");
+            System.out.print(String.format("%02d",scheduleTimes.get(i)) + "  ");
         }
         System.out.println();
         System.out.println("Name : Turn Around : Waiting");
@@ -117,8 +122,8 @@ public class SFJ {
             System.out.println(finishedPs.get(i).name + " " + finishedPs.get(i).turnAroundTime + " " + finishedPs.get(i).waitingTime);
         }
         
-        System.out.println("Average Turn Around Time = " + (totalTurnAround/finishedPs.size()) +
-                " Average Waiting Time = " + (totalWaiting/finishedPs.size()));
+        System.out.println("Average Turn Around Time = " + ((double)totalTurnAround/finishedPs.size()) +
+                " Average Waiting Time = " + ((double)totalWaiting/finishedPs.size()));
     };
     
 }

@@ -61,7 +61,6 @@ public class PS {
         temp = "-1";
         int refresh = 0;
         while(!(activePs.isEmpty() && processes.isEmpty())){
-            refresh++;
             for(int i=0;i<processes.size();i++){
                 if(processes.get(i).arrivalTime<=currentTime){
                     activePs.add(processes.get(i));
@@ -74,7 +73,7 @@ public class PS {
             
             Collections.sort(activePs, new SortByPiority());
             
-            if(refresh>5){
+            if(refresh>=5){
                 refresh = 0;
                 Process p1 = activePs.get(0);
                 Process p2 = activePs.get(activePs.size()-1);
@@ -98,21 +97,23 @@ public class PS {
                 activePs.get(0).exitTime = currentTime;
                 finishedPs.add(activePs.get(0));
                 activePs.remove(0);
+                refresh++;
             }
             
         }
-        
+        scheduleTimes.add(currentTime);
     };
     
     public void printResult(){
         int totalTurnAround = 0;
         int totalWaiting = 0;
+        System.out.print("  ");
         for(int i = 0;i<schedule.size();i++){
-            System.out.print(schedule.get(i) + " ");
+            System.out.print(schedule.get(i) + "  ");
         }
         System.out.println();
         for(int i = 0;i<scheduleTimes.size();i++){
-            System.out.print(scheduleTimes.get(i) + " ");
+            System.out.print(String.format("%02d",scheduleTimes.get(i)) + "  ");
         }
         System.out.println();
         System.out.println("Name : Turn Around : Waiting");
@@ -124,8 +125,8 @@ public class PS {
             System.out.println(finishedPs.get(i).name + " " + finishedPs.get(i).turnAroundTime + " " + finishedPs.get(i).waitingTime);
         }
         
-        System.out.println("Average Turn Around Time = " + (totalTurnAround/finishedPs.size()) +
-                " Average Waiting Time = " + (totalWaiting/finishedPs.size()));
+        System.out.println("Average Turn Around Time = " + ((double)totalTurnAround/finishedPs.size()) +
+                " Average Waiting Time = " + ((double)totalWaiting/finishedPs.size()));
     };
     
 }

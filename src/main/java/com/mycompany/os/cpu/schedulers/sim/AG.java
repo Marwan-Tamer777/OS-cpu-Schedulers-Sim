@@ -188,19 +188,21 @@ public class AG {
           
             
         }
-        RecordState(active);
         
+        RecordState(active);
+        scheduleTimes.add(currentTime);
     };
     
     public void printResult(){
         int totalTurnAround = 0;
         int totalWaiting = 0;
+        System.out.print("  ");
         for(int i = 0;i<schedule.size();i++){
-            System.out.print(schedule.get(i) + " ");
+            System.out.print(schedule.get(i) + "  ");
         }
         System.out.println();
         for(int i = 0;i<scheduleTimes.size();i++){
-            System.out.print(scheduleTimes.get(i) + " ");
+            System.out.print(String.format("%02d",scheduleTimes.get(i)) + "  ");
         }
         System.out.println();
         System.out.println("Name : Turn Around : Waiting");
@@ -212,8 +214,8 @@ public class AG {
             System.out.println(finishedPs.get(i).name + " " + finishedPs.get(i).turnAroundTime + " " + finishedPs.get(i).waitingTime);
         }
         
-        System.out.println("Average Turn Around Time = " + (totalTurnAround/finishedPs.size()) +
-                " Average Waiting Time = " + (totalWaiting/finishedPs.size()));
+        System.out.println("Average Turn Around Time = " + ((double)totalTurnAround/finishedPs.size()) +
+                " Average Waiting Time = " + ((double)totalWaiting/finishedPs.size()));
         
         for(int x=0;x<quantums.size();x++){
             System.out.print("Qunatum for " + (x+1) + " Rotations: ");
