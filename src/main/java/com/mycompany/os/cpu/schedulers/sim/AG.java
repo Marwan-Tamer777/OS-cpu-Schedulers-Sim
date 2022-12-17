@@ -267,7 +267,8 @@ public class AG {
             if(!temp.equals("-1")){currentTime+=contextSwitch;}
             schedule.add(active.name);
             scheduleTimes.add(currentTime);
-            if(!activePs.isEmpty()){temp = activePs.get(0).name;}
+            //if(!activePs.isEmpty()){temp = activePs.get(0).name;}
+            temp = active.name;
         }
             
         List<Integer> arr = null;
