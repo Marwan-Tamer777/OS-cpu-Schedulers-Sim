@@ -46,15 +46,15 @@ public class SFJ {
         contextSwitch = tempI;
         
         //Teting
-        /*processes.add(new Process("P1",0,7));
+        processes.add(new Process("P1",0,7));
         processes.add(new Process("P2",2,4));
         processes.add(new Process("P3",4,1));
-        processes.add(new Process("P4",5,4));*/
-        for(int i=0;i<processesNum;i++){
+        processes.add(new Process("P4",5,4));
+        /*for(int i=0;i<processesNum;i++){
             Process p = new Process();
             p.enterNormalProcess();
             processes.add(p);
-        }
+        }*/
     }
     
     //Each 1 time unit we check on the avail Jobs to see if a shortest one is available.

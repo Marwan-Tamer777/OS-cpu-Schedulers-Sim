@@ -52,14 +52,16 @@ public class RR {
         quantum = tempI;
         
         //Teting
-        /*processes.add(new Process("P1",0,24));
-        processes.add(new Process("P2",0,3));
-        processes.add(new Process("P3",0,3));*/
-        for(int i=0;i<processesNum;i++){
+        processes.add(new Process("P1",0,4));
+        processes.add(new Process("P2",1,8));
+        processes.add(new Process("P3",3,2));
+        processes.add(new Process("P4",10,6));
+        processes.add(new Process("P5",12,5));
+        /*for(int i=0;i<processesNum;i++){
             Process p = new Process();
             p.enterNormalProcess();
             processes.add(p);
-        }
+        }*/
     }
     
     //Each 1 time unit we check on the avail Jobs to see if a shortest one is available.
@@ -85,10 +87,13 @@ public class RR {
                 if(!temp.equals("-1") && contextSwitch != 0){
                     scheduleTimes.add(currentTime);
                     currentTime+=contextSwitch;
+                    
                     schedule.add("--");
                 }
+                
                 temp = activePs.get(0).name;
             }
+            
             schedule.add(activePs.get(0).name);
             //if reamining time less that qunatium then deduce reamining time not quantum
             if(activePs.get(0).remainingTime<quantum){
@@ -97,6 +102,13 @@ public class RR {
             } else {
                 currentTime+= quantum;
                 activePs.get(0).remainingTime -= quantum;
+            }
+            for(int i=0;i<processes.size();i++){
+                if(processes.get(i).arrivalTime<=currentTime){
+                    activePs.add(processes.get(i));
+                    processes.remove(i);
+                    i--;
+                }
             }
             
             if(activePs.get(0).remainingTime <= 0){

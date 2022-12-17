@@ -49,16 +49,16 @@ public class AG {
         contextSwitch = 0;
         
         //Testing
-        /*processes.add(new Process("P1",0,17,4,7));
+        processes.add(new Process("P1",0,17,4,7));
         processes.add(new Process("P2",2,6,7,9));
         processes.add(new Process("P3",5,11,3,4));
-        processes.add(new Process("P4",15,4,6,6));*/
-        for(int i=0;i<processesNum;i++){
+        processes.add(new Process("P4",15,4,6,6));
+        /*for(int i=0;i<processesNum;i++){
             Process p = new Process();
             p.enterQuantumProcess();
             processes.add(p);
             NonSortedPs.add(p);
-        }
+        }*/
     }
     
     //Each 1 time unit we check on the avail Jobs to see if a shortest one is available.
@@ -101,6 +101,7 @@ public class AG {
                 
                 if(ProcessTime(active,high-low)==1){
                     if(activePs.isEmpty()){continue;}
+                    RefreshActives();
                     Collections.sort(activePs, new SortByPiority());
                     active = activePs.get(0);
                     continue;
@@ -267,7 +268,8 @@ public class AG {
             if(!temp.equals("-1")){currentTime+=contextSwitch;}
             schedule.add(active.name);
             scheduleTimes.add(currentTime);
-            if(!activePs.isEmpty()){temp = activePs.get(0).name;}
+            //if(!activePs.isEmpty()){temp = activePs.get(0).name;}
+            temp = active.name;
         }
             
         List<Integer> arr = null;
